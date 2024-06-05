@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from './components/Header.jsx';
-import Willkomen from './components/Willkomen.jsx';
+import Willkommen from './components/Willkomen.jsx';
 import Footer from './components/Footer.jsx';
 import Login from './components/Login.jsx';
 import Navbar from './components/Notesidebar.jsx';
@@ -45,7 +45,7 @@ function App() {
       />
       {showLogin && <Login onClose={handleCloseLogin} onLogin={handleLogin} />}
       {isLoggedIn && <Navbar />}
-      <Willkomen />
+      <Willkommen isLoggedIn={isLoggedIn} />
       <Footer />
       {errorMessage && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

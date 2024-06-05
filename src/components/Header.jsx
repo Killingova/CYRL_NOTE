@@ -9,7 +9,7 @@ export default function Header({ onLoginClick, onLogoutClick, isLoggedIn, userna
         </div>
         <div className="flex items-center">
           <div className="text-white text-xl font-semibold mr-4">
-            {isLoggedIn ? `${username} CYRL NOTE` : 'CREATE YOUR DREAM LIFE'}
+            {isLoggedIn ? `CYRL NOTE ${username} ` : 'CREATE YOUR DREAM LIFE'}
           </div>
           <button
             className="bg-bold-green text-white px-4 py-2 rounded hover:bg-bold-blue dark:bg-darkMode-accent dark:hover:bg-darkMode-text"
