@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
-// Beispiel-Zitate-Array
 const zitate = [
   "Der Weg ist das Ziel.",
   "Was immer du tun kannst oder träumst es zu können, fang damit an.",
@@ -8,12 +7,8 @@ const zitate = [
 ];
 
 export default function Willkommen({ isLoggedIn }) {
-  const [zitat, setZitat] = useState('');
-
-  useEffect(() => {
-    // Wähle ein zufälliges Zitat aus dem Array
-    setZitat(zitate[Math.floor(Math.random() * zitate.length)]);
-  }, []);
+  const zitatIndex = useRef(Math.floor(Math.random() * zitate.length));
+  const [zitat, setZitat] = useState(zitate[zitatIndex.current]);
 
   return (
     <div className="min-h-screen bg-pastel-blue dark:bg-darkMode-background text-gray-800 dark:text-darkMode-text p-8 flex flex-col items-center">

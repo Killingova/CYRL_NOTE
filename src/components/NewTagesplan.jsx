@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
-export default function NewTagesplaner({ onCancel }) {
+const questions = [
+  "Was ist dein Hauptziel für heute?",
+  "Welche Aufgaben müssen erledigt werden?",
+  "Welche Prioritäten hast du heute?",
+  "Was sind deine langfristigen Ziele?",
+  "Was kannst du heute tun, um deine Ziele zu erreichen?",
+];
+
+export default function NewTagesplaner({ onCancel, onSave }) {
   const [date, setDate] = useState(new Date().toISOString().substr(0, 10));
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const [note, setNote] = useState('');
-  const [goals, setGoals] = useState(Array(7).fill(''));
+  const [goals, setGoals] = useState(Array(1).fill(''));
+  const [priority, setPriority] = useState(null);
+  const currentQuestion = useRef(Math.floor(Math.random() * questions.length));
 
   const handleDateChange = (e) => {
     setDate(e.target.value);
@@ -24,84 +34,105 @@ export default function NewTagesplaner({ onCancel }) {
     setGoals(newGoals);
   };
 
+  const handlePriorityChange = (value) => {
+    setPriority(value);
+  };
+
   const handleSave = () => {
-    // Implementieren Sie die Logik zum Speichern der Daten
-    console.log('Saved', { date, time, note, goals });
+    const data = {
+      id: `priority-${priority}`,
+      date,
+      time,
+      note,
+      goals: goals[0],
+      priority,
+    };
+    onSave(data);
   };
 
   const getDayOfWeek = (date) => {
-    const days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+    const days = ['SONNTAG', 'MONTAG', 'DIENSTAG', 'MITTWOCH', 'DONNERSTAG', 'FREITAG', 'SAMSTAG'];
     const dayIndex = new Date(date).getDay();
     return days[dayIndex];
   };
 
   return (
-    <div className="p-4">
-      <div className="flex space-x-4 mb-4">
-        <div>
-          <label className="block">Uhrzeit</label>
-          <input
-            type="time"
-            value={time}
-            onChange={handleTimeChange}
-            className="border p-2 rounded"
+    <div className="flex flex-col items-center min-h-screen bg-pastel-blue">
+      <div className="flex justify-center items-center w-full mt-16 mb-4">
+        <div className="text-2xl font-bold text-bold-green text-center">{questions[currentQuestion.current]}</div>
+      </div>
+      <div className="p-16 bg-pastel-blue max-w-5xl w-full mx-4 mt-4 mb-4 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-center">
+
+          <div>
+            <input
+              type="date"
+              value={date}
+              onChange={handleDateChange}
+              className="border-2 border-earth-terracotta p-2 rounded w-full shadow-lg"
+            />
+          </div>
+
+          <div>
+            <p className="text-earth-terracotta text-4xl">{getDayOfWeek(date)}</p>
+          </div>
+
+          <div>
+            <input
+              type="time"
+              value={time}
+              onChange={handleTimeChange}
+              className="border-2 border-earth-terracotta p-2 rounded w-full shadow-lg"
+            />
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <textarea
+            value={note}
+            onChange={handleNoteChange}
+            className="border-2 border-bold-green p-2 rounded w-full h-32 shadow-lg"
+            placeholder="Notizinhalt"
           />
         </div>
-        <div>
-          <label className="block">Datum</label>
-          <input
-            type="date"
-            value={date}
-            onChange={handleDateChange}
-            className="border p-2 rounded"
+
+        <div className="mb-4">
+          <textarea
+            value={goals[0]}
+            onChange={(e) => handleGoalChange(0, e.target.value)}
+            className="border-2 border-earth-terracotta p-2 rounded w-full h-20 shadow-lg"
+            placeholder="Tagesziel"
           />
         </div>
-        <div>
-          <label className="block">Tag der Woche</label>
-          <p className="border p-2 rounded">{getDayOfWeek(date)}</p>
+
+        <div className="flex justify-center mb-8">
+          <div className="flex items-center">
+            {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+              <div key={num} className="flex flex-col items-center mx-1">
+                <span>{num}</span>
+                <div
+                  onClick={() => handlePriorityChange(num)}
+                  className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 cursor-pointer ${priority === num ? 'bg-bold-green' : 'bg-white'}`}
+                ></div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="mb-4">
-        <label className="block">Notizinhalt</label>
-        <input
-          type="text"
-          value={note}
-          onChange={handleNoteChange}
-          className="border p-2 rounded w-full"
-        />
-      </div>
-
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold mb-2">Tagesziele</h3>
-        <ol>
-          {goals.map((goal, index) => (
-            <li key={index} className="mb-2">
-              <input
-                type="text"
-                value={goal}
-                onChange={(e) => handleGoalChange(index, e.target.value)}
-                className="border p-2 rounded w-full"
-                placeholder={`Ziel ${index + 1}`}
-              />
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <div className="flex space-x-4">
-        <button
-          onClick={handleSave}
-          className="bg-bold-green text-white px-4 py-2 rounded hover:bg-bold-blue"
-        >
-          Speichern
-        </button>
-        <button
-          onClick={onCancel}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Abbrechen
-        </button>
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={handleSave}
+            className="bg-bold-green text-white px-4 py-2 rounded hover:bg-bold-blue shadow-lg"
+          >
+            Speichern
+          </button>
+          <button
+            onClick={onCancel}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 shadow-lg"
+          >
+            Abbrechen
+          </button>
+        </div>
       </div>
     </div>
   );
